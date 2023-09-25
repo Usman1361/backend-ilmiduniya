@@ -10,6 +10,7 @@ app.use(cors());
 app.use(
   fileUpload({
     useTempFiles: true,
+    tempFileDir: "/tmp",
   })
 );
 app.use("/upload", cors(), express.static("./upload"));
