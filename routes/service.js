@@ -9,7 +9,6 @@ cloudinary.config({
   api_key: "917486666464596",
   api_secret: "d2sqp3d-OCV3B0L0OaP23B9MYCA",
 });
-const s3 = new AWS.S3();
 servceRouter.post("/services", verifyToken, async (req, res) => {
   const { heading1, heading2, paragraph } = req.body;
   const file = req.files.image;
