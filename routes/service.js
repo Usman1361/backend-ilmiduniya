@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/index.js";
 import { service } from "../models/service.js";
-import AWS from "aws-sdk";
 import { v2 as cloudinary } from "cloudinary";
 export const servceRouter = Router();
 
@@ -16,25 +15,15 @@ servceRouter.post("/services", verifyToken, async (req, res) => {
   const file = req.files.image;
 
   try {
-    const imageBuffer = fs.readFileSync(file.tempFilePath);
-    const s3Params = {
-      Bucket: "cyclic-clear-kit-newt-eu-west-1",
-      Key: `service/${file.name}`,
-      Body: imageBuffer,
-      ContentType: file.mimetype,
-    };
-    await s3.upload(s3Params).promise();
-    const imagePath = `https://cyclic-clear-kit-newt-eu-west-1.s3.amazonaws.com/service/${file.name}`;
+    const result = await cloudinary.uploader.upload(file.tempFilePath);
 
-    // const result = await cloudinary.uploader.upload(file.tempFilePath);
+    if (!result) {
+      return res
+        .status(500)
+        .json({ message: "Failed to upload image to Cloudinary." });
+    }
 
-    // if (!result) {
-    //   return res
-    //     .status(500)
-    //     .json({ message: "Failed to upload image to Cloudinary." });
-    // }
-
-    // const imagePath = result.url;
+    const imagePath = result.url;
 
     const newService = new service({
       heading1,
